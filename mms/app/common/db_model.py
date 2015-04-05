@@ -6,7 +6,7 @@ class User(db.Model):
 
     __tablename__ = 'user'
 
-    id         = db.Column(db.Integer, primary_key=True)
+    useid         = db.Column(db.Integer, primary_key=True)
     name       = db.Column(db.String(32))
     password   = db.Column(db.String(64))
 
@@ -27,15 +27,15 @@ class Service(db.Model):
 
     __tablename__   = "service"
 
-    id      = db.Column(db.Integer,primary_key=True,index=True)
-    name    = db.Column(db.String(20))
-    fid     = db.Column(db.Integer)
+    serviceid   = db.Column(db.Integer,primary_key=True,index=True)
+    name        = db.Column(db.String(20))
+    servicefid  = db.Column(db.Integer)
 
-    def __init__(self,name,fid):
-        self.name   = name
-        self.fid    = fid
+    def __init__(self,name,servicefid):
+        self.name       = name
+        self.servicefid = servicefid
     def __repr__(self):
-        return "<service info %r,%r,%r>" % (self.id,self.name,self.fid)
+        return "<service info %r,%r,%r>" % (self.serviceid,self.name,self.servicefid)
 
 
 class Permission(db.Model):
@@ -56,7 +56,7 @@ class Host(db.Model):
 
     __tablename__="host"
 
-    id          =   db.Column(db.Integer,primary_key=True)
+    hostid      =   db.Column(db.Integer,primary_key=True)
     hostname    =   db.Column(db.String(64))
     hostip      =   db.Column(db.String(25))
     kernal      =   db.Column(db.String(28))
