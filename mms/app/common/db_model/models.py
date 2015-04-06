@@ -1,18 +1,18 @@
 from app import db
+
 from passlib.apps import custom_app_context as password_context
 
-
-class User(db.Model):
+class user(db.Model):
 
     __tablename__ = 'user'
 
-    useid         = db.Column(db.Integer, primary_key=True)
-    name       = db.Column(db.String(32))
-    password   = db.Column(db.String(64))
+    useid       = db.Column(db.Integer, primary_key=True)
+    name        = db.Column(db.String(32))
+    password    = db.Column(db.String(64))
 
-    def __init__(self, name, password):
-        self.name       = name
-        self.password   = self.hash_password(password)
+    def __init__(self, init_dict):
+        self.name       = init_dict["name"]
+        self.password   = self.hash_password(init_dict["password"])
 
     def hash_password(self, password):
         return password_context.encrypt(password)
@@ -23,7 +23,7 @@ class User(db.Model):
     def set_password(self, password):
         self.password=self.hash_password(password)
 
-class Service(db.Model):
+class service(db.Model):
 
     __tablename__   = "service"
 
@@ -31,14 +31,15 @@ class Service(db.Model):
     name        = db.Column(db.String(20))
     servicefid  = db.Column(db.Integer)
 
-    def __init__(self,name,servicefid):
-        self.name       = name
-        self.servicefid = servicefid
+    def __init__(self,init_dict):
+        self.name       = init_dict["name"]
+        self.servicefid = init_dict["servicefid"]
+
     def __repr__(self):
         return "<service info %r,%r,%r>" % (self.serviceid,self.name,self.servicefid)
 
 
-class Permission(db.Model):
+class permission(db.Model):
 
     __tablename__ = 'permission'
 
@@ -47,18 +48,19 @@ class Permission(db.Model):
     serviceid   = db.Column(db.Integer)
     permission  = db.Column(db.String(5))
 
-    def __init__(self, userid,serviceid,permission):
-        self.userid     = userid
-        self.serviceid  = serviceid
-        self.permission = permission
+    def __init__(self, init_dict):
+        self.userid     = init_dict["userid"]
+        self.serviceid  = init_dict["serviceid"]
+        self.permission = init_dict["permission"]
 
-class Host(db.Model):
+class host(db.Model):
 
     __tablename__="host"
 
     hostid      =   db.Column(db.Integer,primary_key=True)
     hostname    =   db.Column(db.String(64))
     hostip      =   db.Column(db.String(25))
+    '''
     kernal      =   db.Column(db.String(28))
 
     description =   db.Column(db.String(28))
@@ -70,26 +72,11 @@ class Host(db.Model):
 
     city        =   db.Column(db.String(28))
     idc         =   db.Column(db.String(28))
-    
+    '''
     serviceids  =   db.Column(db.String(28))
 
-    def __init__(self,
-                    hostname,hostip,kernal,
-                    description,carrier,
-                    cpus,rams,disk,
-                    city,idc,serviceids):
-        self.hostname       = hostname
-        self.hostip         = hostip 
-        self.kernal         = kernal 
-        
-        self.description    = description
-        self.carrier        = carrier 
-        
-        self.cpus           = cpus 
-        self.rams           = rams 
-        self.disk           = disk 
-        
-        self.city           = city
-        self.idc            = idc
-        self.serviceids     = serviceids 
+    def __init__(self,init_dict):
+        for attr in self.__mapper__.columns.keys():
+            if attr!='hostid':
+                setattr(self,attr,init_dict[attr])
 
