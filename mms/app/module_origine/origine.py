@@ -29,12 +29,20 @@ class origine(object):
 
 
     def delete(self,table_name,params):
+
+        filter_condition=params["filter"]
         where_condition=""
 
-        for key,value in  params.items():
+        for key,value in  filter_condition.items():
             where_condition+='%s in ( "' % key +'","'.join(value)+'") and '
 
-        return "delete from host where %s" %(where[0:-4])
+        obj=__import__("app.common.db_model.models" ,fromlist=["app.common.db_model.models"])
+        cls=getattr(obj,table_name)
+
+        for item in db.session.query(cls).filter(where_condition[0:-4]).all():
+            db.session.delete(item)
+        db.session.commit()
+        return "delete from host where %s" %(where_condition[0:-4])
 
     def update(self,table_name,params):
         hostid  = params["hostid"]
