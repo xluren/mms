@@ -45,8 +45,25 @@ class origine(object):
         return "delete from host where %s" %(where_condition[0:-4])
 
     def update(self,table_name,params):
-        hostid  = params["hostid"]
-        del params["hostid"]
+        filter_condition    = params["filter"]
+        update_dict         = params["update_dict"]
+        where_condition     = ""
+
+
+        for key,value in  filter_condition.items():
+            where_condition+='%s in ( "' % key +'","'.join(value)+'") and '
+
+        obj=__import__("app.common.db_model.models" ,fromlist=["app.common.db_model.models"])
+        cls=getattr(obj,table_name)
+
+        print where_condition[0:-4]
+        print update_dict
+        print db.session.query(cls).filter(where_condition[0:-4]).all() 
+        print "#################"
+        print db.session.query(cls).filter(where_condition[0:-4]).update(update_dict,synchronize_session=False)
+        db.session.commit()
+        print "#################"
+        print db.session.query(cls).filter().all()
         print json.dumps(params,indent=2)
         print type(params).__name__
         return "update host"
