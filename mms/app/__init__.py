@@ -16,6 +16,7 @@ def main():
     method=json.loads(request.data)["method"]
     params=json.loads(request.data)["params"]
 
+
     class_name=method.split('.')[0]
     table_name=class_name
     func_name=method.split('.')[1]
@@ -23,10 +24,10 @@ def main():
     obj=__import__("app.module_%s.%s" % (class_name,class_name),fromlist=["app.module_%s.%s" %(class_name,class_name)])
 
     cls=getattr(obj,class_name)
-    obj=cls()
+    obj=cls(table_name,params)
 
     method=getattr(obj,func_name)
-    result=method(table_name,params)
+    result=method()
 
     return result
 
